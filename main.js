@@ -128,10 +128,9 @@
       .from('.hy-hero-sub',     { y: 34, opacity: 0, duration: 0.8 }, '-=0.7')
       .from('.hy-hero-actions', { y: 30, opacity: 0, duration: 0.8 }, '-=0.6');
 
-    // 滚出：内容上移淡出（scrub 跟随滚动）
+    // 滚出：内容轻微上移（保留可见性，返回首页时状态更稳定）
     gsap.to('.hy-hero-inner', {
-      yPercent: -18,
-      opacity: 0,
+      yPercent: -12,
       ease: 'none',
       scrollTrigger: {
         trigger: '#hero',
@@ -146,11 +145,11 @@
   var catCards = document.querySelectorAll('.hy-cat-card');
   if (catCards.length && !reduceMotion) {
     gsap.from(catCards, {
-      y: 44,
+      y: 28,
       opacity: 0,
-      duration: 0.7,
+      duration: 0.55,
       ease: 'power2.out',
-      stagger: 0.1,
+      clearProps: 'transform,opacity',
       scrollTrigger: {
         trigger: '#category',
         start: 'top 78%'
@@ -231,21 +230,46 @@
       duration: 0.7,
       ease: 'power2.out',
       stagger: 0.15,
+      clearProps: 'transform,opacity',
       scrollTrigger: {
         trigger: '#join',
         start: 'top 78%'
       }
     });
 
-    gsap.from('.hy-benefit-card, .hy-success-card, .hy-join-cta', {
-      y: 40,
+    gsap.from('.hy-benefit-card', {
+      y: 28,
       opacity: 0,
-      duration: 0.7,
+      duration: 0.55,
       ease: 'power2.out',
-      stagger: 0.12,
+      clearProps: 'transform,opacity',
       scrollTrigger: {
         trigger: '.hy-benefit-grid',
         start: 'top 85%'
+      }
+    });
+
+    gsap.from('.hy-success-card', {
+      y: 28,
+      opacity: 0,
+      duration: 0.55,
+      ease: 'power2.out',
+      clearProps: 'transform,opacity',
+      scrollTrigger: {
+        trigger: '.hy-success-grid',
+        start: 'top 85%'
+      }
+    });
+
+    gsap.from('.hy-join-cta', {
+      y: 28,
+      opacity: 0,
+      duration: 0.55,
+      ease: 'power2.out',
+      clearProps: 'transform,opacity',
+      scrollTrigger: {
+        trigger: '.hy-join-cta',
+        start: 'top 90%'
       }
     });
   }
@@ -307,21 +331,9 @@
     });
   }
 
-  /* ---------- 12. 下载 CTA：APP 截图 Swiper + fade-up ---------- */
-  if (typeof Swiper !== 'undefined' && document.querySelector('.hy-app-swiper')) {
-    new Swiper('.hy-app-swiper', {
-      slidesPerView: 2,
-      spaceBetween: 20,
-      breakpoints: {
-        640: { slidesPerView: 2 },
-        900: { slidesPerView: 3 },
-        1280: { slidesPerView: 4 }
-      }
-    });
-  }
-
+  /* ---------- 12. 下载桌面：核心内容依次进入 ---------- */
   if (!reduceMotion) {
-    gsap.from('.hy-download .hy-section-head, .hy-qr-row, .hy-feature-card, .hy-app-swiper', {
+    gsap.from('.hy-download-intro, .hy-download-showcase, .hy-download-perks', {
       y: 44,
       opacity: 0,
       duration: 0.7,
