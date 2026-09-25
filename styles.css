@@ -7,15 +7,15 @@
 :root {
   --hy-orange: #FF6A00;
   --hy-orange-light: #FF8C33;
-  --hy-bg: #0D0D0D;
-  --hy-card: #1A1A1A;
-  --hy-text: #FFFFFF;
-  --hy-text-dim: #A0A0A0;
+  --hy-bg: #FFF8F2;
+  --hy-card: #FFFFFF;
+  --hy-text: #1A1A1A;
+  --hy-text-dim: #7A6A5A;
   --hy-radius: 16px;
   --nav-h: 64px;
 
-  --hy-border: rgba(255, 255, 255, 0.08);
-  --hy-nav-bg: rgba(13, 13, 13, 0.85);
+  --hy-border: rgba(255, 106, 0, 0.12);
+  --hy-nav-bg: rgba(255, 248, 242, 0.85);
   --hy-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
@@ -221,7 +221,7 @@ ol {
   z-index: 200;
   width: 280px;
   max-width: 80vw;
-  background: #141414;
+  background: #FFFFFF;
   border-left: 1px solid var(--hy-border);
   transform: translateX(100%);
   visibility: hidden;
@@ -297,7 +297,7 @@ ol {
 
 /* ---------- 页脚 ---------- */
 .hy-footer {
-  background: #0A0A0A;
+  background: #FFF0E5;
   border-top: 1px solid var(--hy-border);
   padding-top: 56px;
 }
@@ -768,7 +768,7 @@ ol {
    ============================================================ */
 .hy-esports {
   position: relative;
-  background: #0A0A0A;
+  background: #FFF0E5;
   border-top: 1px solid var(--hy-border);
   border-bottom: 1px solid var(--hy-border);
 }
@@ -897,7 +897,7 @@ ol {
 
 .hy-match-vs {
   font-size: 14px;
-  color: #fff;
+  color: var(--hy-orange);
 }
 
 .hy-match-time {
@@ -944,7 +944,7 @@ ol {
   font-size: 22px;
   font-weight: 800;
   letter-spacing: 1px;
-  color: #fff;
+  color: var(--hy-text-dim);
   filter: grayscale(1);
   opacity: 0.45;
   transition: filter 0.3s, opacity 0.3s;
@@ -1266,7 +1266,7 @@ ol {
 .hy-stats {
   position: relative;
   padding: 100px 0;
-  background: #0A0A0A;
+  background: #FFF0E5;
   overflow: hidden;
   border-top: 1px solid var(--hy-border);
   border-bottom: 1px solid var(--hy-border);
@@ -1535,7 +1535,7 @@ ol {
    ============================================================ */
 .hy-download {
   padding: 100px 0;
-  background: #0A0A0A;
+  background: #FFF0E5;
   border-top: 1px solid var(--hy-border);
 }
 
