@@ -349,3 +349,159 @@
   /* ---------- reduced-motion 提示（模块2起入场动画据此关闭） ---------- */
   window.__HY_REDUCED_MOTION__ = reduceMotion;
 })();
+
+/* ============================================================
+   新首页首屏：星空、响应式设计画布与 37 张卡片的 3D 圆柱环
+   ============================================================ */
+(function () {
+  'use strict';
+
+  var stage = document.querySelector('.hy-vision-stage');
+  var canvas = document.getElementById('hyVisionCanvas');
+  var ring = document.getElementById('hyVisionRing');
+  if (!stage || !canvas || !ring) return;
+
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var isPhone = function () { return window.innerWidth <= 700; };
+
+  /* 可复现的星点分布，避免刷新时整个背景闪动。 */
+  function seededRandom(seed) {
+    var value = seed >>> 0;
+    return function () {
+      value = (value * 1664525 + 1013904223) >>> 0;
+      return value / 4294967296;
+    };
+  }
+
+  function paintStars(id, count, blur, minAlpha, maxAlpha, seed) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    var random = seededRandom(seed);
+    var shadows = [];
+    for (var i = 0; i < count; i += 1) {
+      var x = (random() * 100).toFixed(2);
+      var y = (random() * 100).toFixed(2);
+      var alpha = (minAlpha + random() * (maxAlpha - minAlpha)).toFixed(2);
+      shadows.push(x + 'vw ' + y + 'vh ' + blur + 'px 0 rgba(255,255,255,' + alpha + ')');
+    }
+    el.style.boxShadow = shadows.join(',');
+  }
+
+  paintStars('hyVisionStarsA', 150, 0, 0.05, 0.3, 1845);
+  paintStars('hyVisionStarsB', 18, 1.2, 0.35, 0.7, 2026);
+
+  var base = 'https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/';
+  var shots = [
+    ['hf_20260912_110422_0fc34393-7417-41b0-a200-43fd2b08a37f.png', '英雄集结', 'MOBA · 86万在线'],
+    ['hf_20260912_110423_ba46182e-43bc-43a8-9007-a8234acf442d.png', '巅峰王者', '手游 · 102万在线'],
+    ['hf_20260912_110423_06cfbb84-6f96-48f6-be45-e03516510e48.png', '和平战场', '竞技 · 78万在线'],
+    ['hf_20260912_110422_634bf390-f171-4f5d-9151-0d2c86c26e7b.png', '星海远征', '开放世界 · 54万在线'],
+    ['hf_20260912_110423_0cfe058d-db0e-4ee6-9708-7a297cc11a7a.png', '高能时刻', '赛事精选'],
+    ['hf_20260912_110422_a90a35d7-ae20-4ce3-86d7-e3f6f658a6bc.png', '一起开黑', '好友组队'],
+    ['hf_20260912_110422_de267714-7647-4d9a-a0a9-55325683b2a2.png', '人气主播', '正在直播'],
+    ['hf_20260912_110504_80eda275-e380-4ccb-b51f-332f25337079.png', '赛场直击', '官方赛事'],
+    ['hf_20260912_110422_d6ba08f5-4ff8-4f09-8abe-93ee6bb0e34e.png', '娱乐现场', '音乐 · 户外'],
+    ['hf_20260912_110423_87ec2115-3157-47ef-ac98-973f8ad6532d.png', '热爱不止', 'HUYA LIVE']
+  ];
+
+  var cardCount = 37;
+  var radius = 891;
+  var step = 360 / cardCount;
+  var cullAngle = 42;
+  var cards = [];
+
+  for (var index = 0; index < cardCount; index += 1) {
+    var data = shots[index % shots.length];
+    var card = document.createElement('div');
+    card.className = 'hy-vision-card';
+    card.innerHTML = '<img alt="" src="' + base + data[0] + '">' +
+      '<b>' + data[1] + '</b><small>' + data[2] + '</small>';
+    var image = card.querySelector('img');
+    image.addEventListener('error', (function (currentCard) {
+      return function () { currentCard.classList.add('is-broken'); };
+    })(card));
+    ring.appendChild(card);
+    cards.push(card);
+  }
+
+  var phase = -2;
+  var last = performance.now();
+  var stageVisible = true;
+
+  function placeCards() {
+    cards.forEach(function (card, index) {
+      /* R=891、步长=360/37，视角外超过 42° 的卡片直接裁掉。 */
+      var angle = ((index * step + phase) % 360 + 540) % 360 - 180;
+      if (Math.abs(angle) > cullAngle) {
+        card.style.visibility = 'hidden';
+        return;
+      }
+      card.style.visibility = 'visible';
+      var radians = angle * Math.PI / 180;
+      var cosine = Math.cos(radians);
+      card.style.transform = 'translate3d(' + (radius * Math.sin(radians)).toFixed(2) + 'px,0,' +
+        (radius * (1 - cosine)).toFixed(2) + 'px) rotateY(' + (-angle).toFixed(2) + 'deg)';
+      card.style.filter = 'brightness(' + (0.84 + 0.5 * (1 / cosine - 1)).toFixed(3) + ')';
+    });
+  }
+
+  function tick(now) {
+    var delta = Math.min((now - last) / 1000, 0.1);
+    last = now;
+    if (!reduceMotion && stageVisible) phase -= 1.9 * delta;
+    placeCards();
+    requestAnimationFrame(tick);
+  }
+
+  function resizeVision() {
+    if (isPhone()) {
+      canvas.style.removeProperty('--vision-k');
+      stage.style.removeProperty('height');
+      return;
+    }
+    /* 桌面画布固定为 1172px，并按当前视口缩放；首屏高度同步容纳下移后的完整预览。 */
+    var scale = Math.min(window.innerWidth / 1172, window.innerHeight / 700);
+    scale = Math.max(0.72, Math.min(1.28, scale));
+    canvas.style.setProperty('--vision-k', scale.toFixed(4));
+    stage.style.height = Math.max(window.innerHeight, Math.ceil(18 + 1098 * scale)) + 'px';
+  }
+
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(function (entries) {
+      stageVisible = entries[0] ? entries[0].isIntersecting : true;
+      last = performance.now();
+    }, { threshold: 0.01 }).observe(stage);
+  }
+
+  document.addEventListener('visibilitychange', function () { last = performance.now(); });
+  window.addEventListener('resize', resizeVision);
+  if (window.visualViewport) window.visualViewport.addEventListener('resize', resizeVision);
+  resizeVision();
+  placeCards();
+  requestAnimationFrame(tick);
+
+  if (!reduceMotion && Element.prototype.animate) {
+    var items = [
+      ['.hy-vision-badge', 120, 0, 11],
+      ['.hy-vision-copy h1', 180, 0, 18],
+      ['.hy-vision-copy p:nth-of-type(1)', 300, 0, 10],
+      ['.hy-vision-copy p:nth-of-type(2)', 360, 0, 10],
+      ['.hy-vision-main-cta', 460, 0, 13],
+      ['.hy-vision-ring', 420, 0, 20],
+      ['.hy-vision-browser', 650, 0, 28]
+    ];
+    items.forEach(function (item) {
+      var el = document.querySelector(item[0]);
+      if (!el) return;
+      el.animate([
+        { opacity: 0, translate: '0 ' + item[3] + 'px' },
+        { opacity: 1, translate: '0 0' }
+      ], {
+        duration: item[0].indexOf('browser') > -1 ? 900 : 680,
+        delay: item[1],
+        easing: 'cubic-bezier(.16,1,.3,1)',
+        fill: 'both'
+      });
+    });
+  }
+})();
