@@ -2,7 +2,7 @@
 
 使用 HTML、CSS 和 JavaScript 构建的响应式直播平台展示页面。
 
-当前版本：**1.1**
+当前版本：**1.1.2**
 
 [在线预览](https://zhang1845.github.io/huya/) · [源代码](https://github.com/zhang1845/huya)
 
