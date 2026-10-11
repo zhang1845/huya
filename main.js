@@ -3,28 +3,28 @@
 
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  var motionGifs = [
-    'https://motionsites.ai/assets/hero-space-voyage-preview-eECLH3Yc.gif',
-    'https://motionsites.ai/assets/hero-codenest-preview-Cgppc2qV.gif',
-    'https://motionsites.ai/assets/hero-vex-ventures-preview-BczMFIiw.gif',
-    'https://motionsites.ai/assets/hero-stellar-ai-v2-preview-DjvxjG3C.gif',
-    'https://motionsites.ai/assets/hero-asme-preview-B_nGDnTP.gif',
-    'https://motionsites.ai/assets/hero-transform-data-preview-Cx5OU29N.gif',
-    'https://motionsites.ai/assets/hero-vitara-preview-Cjz2QYyU.gif',
-    'https://motionsites.ai/assets/hero-terra-preview-BFjrCr7T.gif',
-    'https://motionsites.ai/assets/hero-skyelite-preview-DHaZIgUv.gif',
-    'https://motionsites.ai/assets/hero-aethera-preview-DknSlcTa.gif',
-    'https://motionsites.ai/assets/hero-designpro-preview-D8c5_een.gif',
-    'https://motionsites.ai/assets/hero-stellar-ai-preview-D3HL6bw1.gif',
-    'https://motionsites.ai/assets/hero-xportfolio-preview-D4A8maiC.gif',
-    'https://motionsites.ai/assets/hero-orbit-web3-preview-BXt4OttD.gif',
-    'https://motionsites.ai/assets/hero-nexora-preview-cx5HmUgo.gif',
-    'https://motionsites.ai/assets/hero-evr-ventures-preview-DZxeVFEX.gif',
-    'https://motionsites.ai/assets/hero-planet-orbit-preview-DWAP8Z1P.gif',
-    'https://motionsites.ai/assets/hero-new-era-preview-CocuDUm9.gif',
-    'https://motionsites.ai/assets/hero-wealth-preview-B70idl_u.gif',
-    'https://motionsites.ai/assets/hero-luminex-preview-CxOP7ce6.gif',
-    'https://motionsites.ai/assets/hero-celestia-preview-0yO3jXO8.gif'
+  var huyaShowcaseImages = [
+    'assets/showcase/huya-showcase-01.jpg',
+    'assets/showcase/huya-showcase-02.jpg',
+    'assets/showcase/huya-showcase-03.jpg',
+    'assets/showcase/huya-showcase-04.jpg',
+    'assets/showcase/huya-showcase-05.jpg',
+    'assets/showcase/huya-showcase-06.jpg',
+    'assets/showcase/huya-showcase-07.jpg',
+    'assets/showcase/huya-showcase-08.jpg',
+    'assets/showcase/huya-showcase-09.jpg',
+    'assets/showcase/huya-showcase-10.jpg',
+    'assets/showcase/huya-showcase-11.jpg',
+    'assets/showcase/huya-showcase-12.jpg',
+    'assets/showcase/huya-showcase-13.jpg',
+    'assets/showcase/huya-showcase-14.jpg',
+    'assets/showcase/huya-showcase-15.jpg',
+    'assets/showcase/huya-showcase-16.jpg',
+    'assets/showcase/huya-showcase-17.jpg',
+    'assets/showcase/huya-showcase-18.jpg',
+    'assets/showcase/huya-showcase-19.jpg',
+    'assets/showcase/huya-showcase-20.jpg',
+    'assets/showcase/huya-showcase-21.jpg'
   ];
 
   function buildMarquee(track, images) {
@@ -45,8 +45,8 @@
 
   var firstTrack = document.getElementById('marqueeTrackOne');
   var secondTrack = document.getElementById('marqueeTrackTwo');
-  buildMarquee(firstTrack, motionGifs.slice(0, 11));
-  buildMarquee(secondTrack, motionGifs.slice(11));
+  buildMarquee(firstTrack, huyaShowcaseImages.slice(0, 11));
+  buildMarquee(secondTrack, huyaShowcaseImages.slice(11));
 
   /* 动态内容改变页面高度后，重新校准带锚点打开的位置。 */
   if (window.location.hash) {
@@ -144,6 +144,10 @@
   var cards = Array.prototype.slice.call(document.querySelectorAll('.project-card'));
   var chars = aboutText ? Array.prototype.slice.call(aboutText.querySelectorAll('.char')) : [];
   var ticking = false;
+  var marqueeScrollOffset = 0;
+  var marqueeAutoOffset = 0;
+  var marqueeLastFrame = 0;
+  var marqueeSpeed = 24;
 
   function clamp(value, min, max) {
     return Math.min(max, Math.max(min, value));
@@ -160,9 +164,7 @@
     }
 
     if (marqueeSection && firstTrack && secondTrack) {
-      var offset = (scrollY - marqueeSection.offsetTop + viewportHeight) * 0.3;
-      firstTrack.style.transform = 'translate3d(' + (offset - 200).toFixed(1) + 'px, 0, 0)';
-      secondTrack.style.transform = 'translate3d(' + (-(offset - 200)).toFixed(1) + 'px, 0, 0)';
+      marqueeScrollOffset = (scrollY - marqueeSection.offsetTop + viewportHeight) * 0.3 - 200;
     }
 
     if (aboutText && chars.length) {
@@ -195,6 +197,114 @@
   window.addEventListener('scroll', requestPaint, { passive: true });
   window.addEventListener('resize', requestPaint);
   requestPaint();
+
+  function wrapMarqueeOffset(value, width) {
+    return ((value % width) + width) % width - width;
+  }
+
+  function animateMarquee(timestamp) {
+    if (!reduceMotion && firstTrack && secondTrack) {
+      if (!marqueeLastFrame) marqueeLastFrame = timestamp;
+      var elapsed = Math.min(timestamp - marqueeLastFrame, 64);
+      marqueeLastFrame = timestamp;
+      marqueeAutoOffset += elapsed * marqueeSpeed / 1000;
+
+      var firstCycleWidth = firstTrack.scrollWidth / 3;
+      var secondCycleWidth = secondTrack.scrollWidth / 3;
+      var firstX = wrapMarqueeOffset(marqueeAutoOffset + marqueeScrollOffset, firstCycleWidth);
+      var secondX = wrapMarqueeOffset(-marqueeAutoOffset - marqueeScrollOffset, secondCycleWidth);
+
+      firstTrack.style.transform = 'translate3d(' + firstX.toFixed(1) + 'px, 0, 0)';
+      secondTrack.style.transform = 'translate3d(' + secondX.toFixed(1) + 'px, 0, 0)';
+    }
+    requestAnimationFrame(animateMarquee);
+  }
+
+  requestAnimationFrame(animateMarquee);
+
+  var hostCarousel = document.getElementById('hostCarousel');
+  var hostTrack = document.getElementById('hostTrack');
+  var hostCards = hostTrack ? Array.prototype.slice.call(hostTrack.querySelectorAll('.host-card')) : [];
+  var hostIndex = 0;
+  var hostTimer;
+  var hostPointerStart = 0;
+  var hostDidSwipe = false;
+
+  function paintHostCarousel() {
+    var total = hostCards.length;
+    hostCards.forEach(function (card, index) {
+      var distance = (index - hostIndex + total) % total;
+      if (distance > total / 2) distance -= total;
+      card.classList.remove('is-active', 'is-prev', 'is-next', 'is-prev-2', 'is-next-2');
+      if (distance === 0) card.classList.add('is-active');
+      if (distance === -1) card.classList.add('is-prev');
+      if (distance === 1) card.classList.add('is-next');
+      if (distance === -2) card.classList.add('is-prev-2');
+      if (distance === 2) card.classList.add('is-next-2');
+      card.setAttribute('aria-hidden', distance === 0 ? 'false' : 'true');
+    });
+  }
+
+  function moveHosts(direction) {
+    if (!hostCards.length) return;
+    hostIndex = (hostIndex + direction + hostCards.length) % hostCards.length;
+    paintHostCarousel();
+  }
+
+  function stopHostAutoplay() {
+    clearInterval(hostTimer);
+  }
+
+  function startHostAutoplay() {
+    stopHostAutoplay();
+    if (!reduceMotion && hostCards.length) hostTimer = setInterval(function () {
+      moveHosts(1);
+    }, 3800);
+  }
+
+  if (hostCarousel && hostTrack) {
+    paintHostCarousel();
+    hostCarousel.addEventListener('mouseenter', stopHostAutoplay);
+    hostCarousel.addEventListener('mouseleave', startHostAutoplay);
+    hostCarousel.addEventListener('focusin', stopHostAutoplay);
+    hostCarousel.addEventListener('focusout', startHostAutoplay);
+    hostCarousel.addEventListener('keydown', function (event) {
+      if (event.key === 'ArrowLeft') moveHosts(-1);
+      if (event.key === 'ArrowRight') moveHosts(1);
+    });
+    hostCarousel.addEventListener('pointerdown', function (event) {
+      hostPointerStart = event.clientX;
+      hostDidSwipe = false;
+    });
+    hostCarousel.addEventListener('pointerup', function (event) {
+      var distance = event.clientX - hostPointerStart;
+      if (Math.abs(distance) < 45) return;
+      hostDidSwipe = true;
+      moveHosts(distance < 0 ? 1 : -1);
+      startHostAutoplay();
+    });
+    hostTrack.addEventListener('click', function (event) {
+      if (hostDidSwipe) {
+        hostDidSwipe = false;
+        return;
+      }
+      var clickedCard = event.target.closest('.host-card');
+      if (!clickedCard) return;
+      var direction = 0;
+      if (clickedCard.classList.contains('is-prev') || clickedCard.classList.contains('is-prev-2')) {
+        direction = -1;
+      } else if (clickedCard.classList.contains('is-next') || clickedCard.classList.contains('is-next-2')) {
+        direction = 1;
+      } else if (clickedCard.classList.contains('is-active')) {
+        var cardRect = clickedCard.getBoundingClientRect();
+        direction = event.clientX < cardRect.left + cardRect.width / 2 ? -1 : 1;
+      }
+      if (!direction) return;
+      moveHosts(direction);
+      startHostAutoplay();
+    });
+    startHostAutoplay();
+  }
 
   var toast = document.getElementById('toast');
   var toastTimer;
