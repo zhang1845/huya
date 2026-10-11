@@ -188,6 +188,7 @@ a {
 }
 
 .mascot-look,
+.mascot-camera,
 .mascot-idle {
   display: block;
   position: relative;
@@ -203,8 +204,14 @@ a {
   will-change: transform;
 }
 
+.mascot-camera {
+  animation: mascot-camera 9s ease-in-out infinite;
+  transform-origin: 50% 72%;
+  will-change: transform;
+}
+
 .mascot-idle {
-  animation: mascot-idle 6.4s cubic-bezier(.45, .05, .2, 1) infinite;
+  animation: mascot-idle 2.4s cubic-bezier(.45, .05, .2, 1) infinite;
   transform-origin: 50% 88%;
   will-change: transform;
 }
@@ -218,7 +225,7 @@ a {
   object-fit: contain;
   object-position: bottom center;
   filter: drop-shadow(0 28px 48px rgba(0, 0, 0, .7));
-  animation: mascot-breathe 6.4s ease-in-out infinite;
+  animation: mascot-breathe 2.4s ease-in-out infinite;
   transform-origin: 50% 84%;
   will-change: transform, filter;
 }
@@ -233,7 +240,7 @@ a {
   border-radius: 50%;
   background: radial-gradient(ellipse, rgba(0, 0, 0, .72), rgba(0, 0, 0, 0) 72%);
   filter: blur(8px);
-  animation: mascot-shadow 6.4s ease-in-out infinite;
+  animation: mascot-shadow 2.4s ease-in-out infinite;
   transform-origin: center;
 }
 
@@ -248,32 +255,40 @@ a {
   transform: translate(-50%, -50%);
   background: radial-gradient(circle, rgba(127, 217, 255, .24), rgba(182, 0, 168, .08) 48%, transparent 72%);
   filter: blur(16px);
-  animation: mascot-halo 6.4s ease-in-out infinite;
+  animation: mascot-halo 4.8s ease-in-out infinite;
   will-change: transform, opacity;
 }
 
+@keyframes mascot-camera {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  24% { transform: translate3d(-6px, -3px, 0) scale(1.022); }
+  48% { transform: translate3d(4px, -6px, 0) scale(1.036); }
+  72% { transform: translate3d(7px, -2px, 0) scale(1.018); }
+}
+
 @keyframes mascot-idle {
-  0%, 100% { transform: translate3d(0, 0, 0) rotate(-.35deg); }
-  16% { transform: translate3d(3px, -12px, 0) rotate(.9deg); }
-  34% { transform: translate3d(-2px, -6px, 0) rotate(-.55deg); }
-  53% { transform: translate3d(3px, -17px, 0) rotate(.72deg); }
-  72% { transform: translate3d(-2px, -8px, 0) rotate(-.65deg); }
-  88% { transform: translate3d(1px, -3px, 0) rotate(.3deg); }
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(-1deg); }
+  12.5% { transform: translate3d(-11px, -8px, 0) rotate(-2.8deg); }
+  25% { transform: translate3d(-2px, -19px, 0) rotate(.4deg); }
+  37.5% { transform: translate3d(13px, -7px, 0) rotate(2.7deg); }
+  50% { transform: translate3d(1px, -17px, 0) rotate(-.5deg); }
+  62.5% { transform: translate3d(-13px, -5px, 0) rotate(-2.9deg); }
+  75% { transform: translate3d(2px, -20px, 0) rotate(.7deg); }
+  87.5% { transform: translate3d(12px, -8px, 0) rotate(2.4deg); }
 }
 
 @keyframes mascot-breathe {
   0%, 100% { transform: scale3d(1, 1, 1); filter: drop-shadow(0 28px 48px rgba(0, 0, 0, .7)); }
-  26% { transform: scale3d(1.006, .995, 1); }
-  53% { transform: scale3d(.996, 1.008, 1); filter: drop-shadow(0 36px 54px rgba(0, 0, 0, .62)); }
-  78% { transform: scale3d(1.004, .998, 1); }
+  12.5%, 37.5%, 62.5%, 87.5% { transform: scale3d(1.018, .982, 1); }
+  25%, 75% { transform: scale3d(.992, 1.014, 1); filter: drop-shadow(0 38px 56px rgba(0, 0, 0, .58)); }
+  50% { transform: scale3d(.995, 1.01, 1); filter: drop-shadow(0 35px 52px rgba(0, 0, 0, .62)); }
 }
 
 @keyframes mascot-shadow {
   0%, 100% { opacity: .78; transform: scaleX(1); }
-  16% { opacity: .58; transform: scaleX(.91); }
-  34% { opacity: .68; transform: scaleX(.96); }
-  53% { opacity: .48; transform: scaleX(.86); }
-  72% { opacity: .64; transform: scaleX(.94); }
+  12.5%, 37.5%, 62.5%, 87.5% { opacity: .7; transform: scaleX(.96); }
+  25%, 75% { opacity: .44; transform: scaleX(.82); }
+  50% { opacity: .5; transform: scaleX(.87); }
 }
 
 @keyframes mascot-halo {
