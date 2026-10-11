@@ -259,13 +259,11 @@
     stopHostAutoplay();
     if (!reduceMotion && hostCards.length) hostTimer = setInterval(function () {
       moveHosts(1);
-    }, 3800);
+    }, 1500);
   }
 
   if (hostCarousel && hostTrack) {
     paintHostCarousel();
-    hostCarousel.addEventListener('mouseenter', stopHostAutoplay);
-    hostCarousel.addEventListener('mouseleave', startHostAutoplay);
     hostCarousel.addEventListener('focusin', stopHostAutoplay);
     hostCarousel.addEventListener('focusout', startHostAutoplay);
     hostCarousel.addEventListener('keydown', function (event) {
